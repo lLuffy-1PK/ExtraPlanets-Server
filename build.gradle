@@ -1,0 +1,77 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'lib'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+
+version = "1.12.2-0.6.6-thecpu-1.0"
+archivesBaseName = "ExtraPlanets"
+
+[compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+}
+
+minecraft {
+    mappings channel: 'snapshot', version: '20171003-1.12'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                extraplanets {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                extraplanets {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2855'
+
+    compile name: "ExtraPlanets" + '-' + "1.12.2-0.6.6-deobf"
+    compile name: "GalacticraftCore-1.12.2-thecpu-1.1-deobf"
+    compile name: "MicdoodleCore-1.12.2-4.0.2.280"
+    compile name: "Galacticraft-Planets-1.12.2-4.0.2.280"
+    compile name: "MJRLegendsLib-1.12.2-1.1.9-deobf"
+    compile name: "industrialcraft-2-2.8.187-ex112"
+    compile name: "RedstoneFlux-1.12-2.1.1.1-universal"
+    compile name: "Mekanism-1.12.2-9.8.3.390-api"
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from zipTree('lib/' + "ExtraPlanets" + '-' + "1.12.2-0.6.6" + '.jar')
+    exclude('net/minecraft')
+    exclude('micdoodle8/mods/galacticraft/core')
+    exclude('micdoodle8/mods/galacticraft/api')
+}
