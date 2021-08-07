@@ -85,7 +85,6 @@ public class ElectricRocket extends Item implements IHoldableItem {
                     } else {
                         EntityElectricRocket spaceship = new EntityElectricRocket(world, centerX, centerY, centerZ, EnumRocketType.values()[stack.getItemDamage()]);
                         spaceship.setPosition(spaceship.posX, spaceship.posY + spaceship.getOnPadYOffset(), spaceship.posZ);
-                        spaceship.owner = playerIn.getUniqueID();
                         world.spawnEntity(spaceship);
                         if (!playerIn.capabilities.isCreativeMode) {
                             stack.shrink(1);

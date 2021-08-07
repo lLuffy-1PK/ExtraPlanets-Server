@@ -48,7 +48,6 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 public abstract class EntityElectricSpaceshipBase extends Entity implements IPacketReceiver, IIgnoreShift, ITelemetry {
     public static final Predicate<Entity> rocketSelector = new Predicate<Entity>() {
@@ -56,14 +55,12 @@ public abstract class EntityElectricSpaceshipBase extends Entity implements IPac
             return e instanceof EntitySpaceshipBase && e.isEntityAlive();
         }
     };
-    private static final UUID nullUUID = new UUID(0L, 0L);
     private final ArrayList<BlockVec3Dim> telemetryList = new ArrayList();
     public int launchPhase;
     public int timeUntilLaunch;
     public float timeSinceLaunch;
     public float rollAmplitude;
     public float shipDamage;
-    public UUID owner;
     protected long ticks = 0L;
     protected double dragAir;
     protected float currentPowerCapacity;
@@ -119,13 +116,6 @@ public abstract class EntityElectricSpaceshipBase extends Entity implements IPac
             if (this.isEntityInvulnerable(par1DamageSource) || this.posY > 300.0D || e instanceof EntityLivingBase && !(e instanceof EntityPlayer)) {
                 return false;
             } else {
-                if (this.owner != null && e instanceof EntityPlayer && !((EntityPlayer) e).capabilities.isCreativeMode) {
-                    if (this.owner.compareTo(nullUUID) != 0) {
-                        if (e.getUniqueID().compareTo(this.owner) != 0) {
-                            return false;
-                        }
-                    }
-                }
                 this.rollAmplitude = 10.0F;
                 this.markVelocityChanged();
                 this.shipDamage += par2 * 10.0F;
@@ -419,7 +409,6 @@ public abstract class EntityElectricSpaceshipBase extends Entity implements IPac
     protected void writeEntityToNBT(NBTTagCompound nbt) {
         nbt.setInteger("launchPhase", this.launchPhase + 1);
         nbt.setInteger("timeUntilLaunch", this.timeUntilLaunch);
-        nbt.setUniqueId("Owner", this.owner);
         if (this.telemetryList.size() > 0) {
             NBTTagList teleNBTList = new NBTTagList();
             Iterator var3 = (new ArrayList(this.telemetryList)).iterator();
@@ -438,7 +427,6 @@ public abstract class EntityElectricSpaceshipBase extends Entity implements IPac
 
     protected void readEntityFromNBT(NBTTagCompound nbt) {
         this.timeUntilLaunch = nbt.getInteger("timeUntilLaunch");
-        this.owner = nbt.getUniqueId("Owner");
         boolean hasOldTags = false;
         if (nbt.getKeySet().contains("launched")) {
             hasOldTags = true;
